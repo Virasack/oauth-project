@@ -1,7 +1,7 @@
 var LocalStrategy = require('passport-local').Strategy;
 var FacebookStrategy = require('passport-facebook').Strategy;
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
-
+var BearerStrategy = require('passport-http-bearer').Strategy;
 
 var User = require('../app/models/user');
 
@@ -203,5 +203,14 @@ passport.use(new FacebookStrategy({
 
 	));
 
+passport.use(new BearerStrategy({},
+		function(token, done){
+			User.findOne({ _id: token }, function(err, user){
+				if(!user)
+					return done(null, false);
+				return done(null, user);
+			});
+		})
+);
 
 };
